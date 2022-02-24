@@ -15,6 +15,11 @@ class VerifyPage extends StatefulWidget {
 }
 
 class _VerifyPageState extends State<VerifyPage> {
+  final FocusNode focus1 = FocusNode();
+  final FocusNode focus2 = FocusNode();
+  final FocusNode focus3 = FocusNode();
+  final FocusNode focus4 = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,14 +96,36 @@ class _VerifyPageState extends State<VerifyPage> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 26), //https://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@github.com/CodeHiSmile/homework1.git
+              margin: const EdgeInsets.symmetric(horizontal: 26),
+              //https://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@github.com/CodeHiSmile/homework1.git
               height: 51,
               child: Row(
-                children: const <Widget>[
-                  ItemPin(),
-                  ItemPin(),
-                  ItemPin(),
-                  ItemPin(),
+                children: <Widget>[
+                  ItemPin(
+                    autoFocus: true,
+                    focus: focus1,
+                    onCallBack: () {
+                      FocusScope.of(context).requestFocus(focus2);
+                    },
+                  ),
+                  ItemPin(
+                    focus: focus2,
+                    onCallBack: () {
+                      FocusScope.of(context).requestFocus(focus3);
+                    },
+                  ),
+                  ItemPin(
+                    focus: focus3,
+                    onCallBack: () {
+                      FocusScope.of(context).requestFocus(focus4);
+                    },
+                  ),
+                  ItemPin(
+                    focus: focus4,
+                    onCallBack: () {
+                      FocusScope.of(context).unfocus();
+                    },
+                  ),
                 ],
               ),
             ),

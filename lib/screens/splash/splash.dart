@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taxi_app/commons/app_images.dart';
 import 'package:taxi_app/screens/sign_in/sign_in_page.dart';
+import 'package:taxi_app/screens/sign_in/sign_in_screen.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);

@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:taxi_app/commons/app_colors.dart';
 
 class ItemPin extends StatelessWidget {
-  const ItemPin({Key? key}) : super(key: key);
+  final bool autoFocus;
+  final FocusNode? focus;
+  final Function? onCallBack;
+
+  const ItemPin({
+    Key? key,
+    this.autoFocus = false,
+    required this.focus,
+    this.onCallBack,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +28,18 @@ class ItemPin extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 22),
         child: Center(
           child: TextFormField(
+            autofocus: autoFocus,
+            focusNode: focus,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
+            onChanged: (value) {
+              if (value.length == 1) {
+                onCallBack?.call();
+              }
+            },
             decoration: const InputDecoration(
               hintStyle: TextStyle(
                 fontSize: 14,

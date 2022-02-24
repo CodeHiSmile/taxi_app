@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:taxi_app/commons/app_colors.dart';
 import 'package:taxi_app/commons/app_gradient.dart';
 import 'package:taxi_app/commons/app_images.dart';
 import 'package:taxi_app/models/conversation_entity.dart';
+import 'package:taxi_app/utils/datetime_formatter.dart';
 
 import 'custom_chat_bubble.dart';
 
@@ -21,7 +23,9 @@ class DetailConversation extends StatefulWidget {
 class _DetailConversationState extends State<DetailConversation> {
   @override
   Widget build(BuildContext context) {
-    Conversation user = listConversation.where((element) => element.nameUser == widget.idUser).first;
+    Conversation conversation = listConversation
+        .where((element) => element.nameUser == widget.idUser)
+        .first;
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -47,7 +51,7 @@ class _DetailConversationState extends State<DetailConversation> {
                     ),
                     const SizedBox(height: 25),
                     Text(
-                      "${user.nameUser}",
+                      "${conversation.nameUser}",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 26,
@@ -70,7 +74,7 @@ class _DetailConversationState extends State<DetailConversation> {
                           borderRadius: BorderRadius.circular(31),
                           image: DecorationImage(
                             image: NetworkImage(
-                              user.avatarUrl ?? '',
+                              conversation.avatarUrl ?? '',
                             ),
                           ),
                         ),
@@ -116,33 +120,111 @@ class _DetailConversationState extends State<DetailConversation> {
               },
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 12),
-                itemCount: user.messages?.length ?? 0,
+                itemCount: conversation.messages?.length ?? 0,
                 itemBuilder: (context, index) {
-                  final isCheck = user.messages![index].userId == widget.idUser;
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    margin: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      mainAxisAlignment: isCheck ? MainAxisAlignment.start : MainAxisAlignment.end,
-                      children: [
-                        CustomPaint(
-                          painter: CustomChatBubble(
-                            isOwn: !isCheck,
-                            color: !isCheck ? AppColors.greyBorder : AppColors.greenTop,
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  final isOwner = conversation.messages![index].userId != widget.idUser;
+                  final dateSend = DateTime.parse(conversation.messages![index].timeSend ?? DateTime.now().toString());
+                  final isDifferent = DateTime
+                      .now()
+                      .difference(dateSend)
+                      .inDays;
+
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        if (!(conversation.messages![index].isChoose ?? false)) {
+                          conversation.messages![index].isChoose = true;
+                        } else {
+                          conversation.messages![index].isChoose = false;
+                        }
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 2),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Visibility(
+                            visible: index == 0,
                             child: Text(
-                              user.messages![index].content ?? '',
+                              DateFormat(isDifferent > 3
+                                  ? DateTimeFormater.formatDate
+                                  : DateTimeFormater.formatNameDayHour)
+                                  .format(DateTime.parse(
+                                  conversation.messages![index].timeSend ?? DateTime.now().toString())),
                               style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w300,
+                                color: Color(0xFF8A8A8F),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            margin: const EdgeInsets.only(top: 7, bottom: 3),
+                            child: Row(
+                              mainAxisAlignment: isOwner ? MainAxisAlignment.end : MainAxisAlignment.start,
+                              children: [
+                                Visibility(
+                                  visible: isOwner,
+                                  child: SizedBox(
+                                    width: MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width * 0.2,
+                                  ),
+                                ),
+                                Flexible(
+                                  child: CustomPaint(
+                                    painter: CustomChatBubble(
+                                      isOwn: isOwner,
+                                      color: isOwner ? AppColors.greenTop : AppColors.greyBorder,
+                                    ),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                      child: Text(
+                                        conversation.messages![index].content ?? '',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: !isOwner,
+                                  child: SizedBox(
+                                    width: MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width * 0.2,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Visibility(
+                            visible: conversation.messages?[index].isChoose ?? false,
+                            child: Align(
+                              alignment: isOwner ? Alignment.centerRight : Alignment.centerLeft,
+                              child: Padding(
+                                padding: isOwner ? const EdgeInsets.only(right: 20) : const EdgeInsets.only(left: 20),
+                                child: Text(
+                                  "Read ${DateFormat(DateTimeFormater.formatHour)
+                                      .format(DateTime.parse(DateTime.now().toString()))}",
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w300,
+                                    color: Color(0xFF858E99),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -181,8 +263,8 @@ class _DetailConversationState extends State<DetailConversation> {
                     keyboardType: TextInputType.multiline,
                   ),
                 ),
-                SizedBox(width: 12),
-                Icon(
+                const SizedBox(width: 12),
+                const Icon(
                   Icons.send,
                   color: AppColors.greenBottom,
                 )

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:taxi_app/screens/sign_in/sign_in_page.dart';
 import 'package:taxi_app/screens/splash/splash.dart';
-
-import 'screens/chat/home_chat.dart';
-import 'screens/verify/verify_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

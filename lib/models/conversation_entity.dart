@@ -16,11 +16,15 @@ class Message {
   String? content;
   String? timeSend;
   String? userId;
+  String? timeSeen;
+  bool? isChoose;
 
   Message({
     this.userId,
     this.content,
     this.timeSend,
+    this.isChoose,
+    this.timeSeen,
   });
 }
 
@@ -31,7 +35,7 @@ List<Conversation> listConversation = [
     lastTime: "Now",
     messages: [
       Message(
-        content: 'Hi, How are you?',
+        content: 'Hi, How are you? asdhasdohoas ahsdhas hdashd ahsdhas sahd ashdashd ashdhasd as ',
         timeSend: "2022-02-14 20:46:31.710",
         userId: "Flutter",
       ),
@@ -41,7 +45,17 @@ List<Conversation> listConversation = [
         userId: "Me",
       ),
       Message(
+        content: 'Where are you from?',
+        timeSend: "2022-02-14 21:46:31.710",
+        userId: "Me",
+      ),
+      Message(
         content: 'I am very good',
+        timeSend: "2022-02-14 23:46:31.710",
+        userId: "Flutter",
+      ),
+      Message(
+        content: 'I am from VietNam',
         timeSend: "2022-02-14 23:46:31.710",
         userId: "Flutter",
       ),
